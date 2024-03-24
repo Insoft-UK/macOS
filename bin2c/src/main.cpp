@@ -41,10 +41,10 @@ void char2cchar(char *buf, char c)
                 } else if (c=='\\') {
                         strcpy(buf, "'\\\\'");
                 } else {
-                        sprintf(buf, "'%c'", (unsigned char)c);
+                        snprintf(buf, 1024, "'%c'", (unsigned char)c);
                 }
         } else {
-                sprintf(buf, "0x%02x", (unsigned char)c);
+                snprintf(buf, 1024, "0x%02x", (unsigned char)c);
         }
 }
 
@@ -125,7 +125,9 @@ int main(int argc, char *argv[])
         long l;
         FILE *in=NULL, *out=NULL, *outh=NULL;
         char *inname=NULL, *outname, *outhname;
-        char *name="bindata";
+        char *name;
+        char txt[]="bindata";
+        name = txt;
         int x=1;
         char n[NAME_MAX];
 
