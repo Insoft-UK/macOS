@@ -118,21 +118,7 @@ long filesize(const char *filename)
     return l;
 }
 
-bool isAtariSTEPalette(const uint16_t* palt) {
-    uint16_t color;
-
-    for ( int i=0; i < 16; i++) {
-        color = palt[i];
-#ifdef __LITTLE_ENDIAN__
-        color = swap_endian(color);
-#endif
-        if ( color & 0b1111000000000000 ) return false;
-    }
-    
-    return true;
-}
-
-bool isValidNeoChrome(const NEOchrome &header) {
+bool isNEOchrome(const NEOchrome &header) {
     if (header.flag != 0 || header.resolution != 0) return false;
     return true;
 }
@@ -173,7 +159,7 @@ int neoChromeToBmp(std::string &filename, std::string &out_filename) {
     
     
     infile.read((char *)&header, sizeof(NEOchrome));
-    if (!isValidNeoChrome(header)) goto error;
+    if (!isNEOchrome(header)) goto error;
     
     outfile.write((const char *)preDefinedBmpHeader, sizeof(preDefinedBmpHeader));
     
@@ -225,6 +211,9 @@ error:
     if (outfile.is_open())
         outfile.close();
     
+    if (header.resolution != 0) {
+        std::cout << "Only low resolution supported.\n";
+    }
     return -1;
 }
 
