@@ -20,11 +20,12 @@
  THE SOFTWARE.
 */
 
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+#include <sstream>
+#include <regex>
+#include <fstream>
 
 typedef struct __attribute__((__packed__)) {
     int16_t flag;              // flag word [always 0]
@@ -61,14 +62,6 @@ typedef struct __attribute__((__packed__)) {
     int16_t _reserved[33];         // reserved for future expansion
 } NEOchrome;
 
-
-#include <iostream>
-//#include <cstring>
-#include <sstream>
-#include <iomanip>
-#include <sstream>
-#include <regex>
-#include <fstream>
 
 template <typename T>
 T swap_endian(T u) {
