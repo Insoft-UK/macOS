@@ -58,16 +58,16 @@ T swap_endian(T u) {
 
 void usage(void) {
     std::cout << "Copyright (c) 2023 Insoft. All rights reserved\n";
-    std::cout << "The Atari ST/STE NeoChrome image file converter\n";
-    std::cout << "Usage: neo2bmp in-file [-o out-file]\n";
+    std::cout << "The Atari ST/STE Degas image file converter\n";
+    std::cout << "Usage: degas in-file [-o out-file]\n";
 }
 
 void error(void) {
-    std::cout << "neo2bmp: try 'neo2bmp --help' for more information\n";
+    std::cout << "degas: try 'degas --help' for more information\n";
 }
 
 void version(void) {
-#define __BUILD_NUMBER 100116
+#define __BUILD_NUMBER 100004
     std::cout
     << "neo2bmp v"
     << (unsigned)__BUILD_NUMBER / 100000 << "."

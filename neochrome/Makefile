@@ -1,2 +1,2 @@
-neo2bmp:
+neochrome:
 	g++ -std=c++20 src/*.cpp -o bin/neo2bmp -O
