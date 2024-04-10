@@ -75,7 +75,7 @@ void error(void)
 void version(void) {
 #define __BUILD_NUMBER 100000
     std::cout
-    << "neo2bmp v"
+    << "pixfont v"
     << (unsigned)__BUILD_NUMBER / 100000 << "."
     << (unsigned)__BUILD_NUMBER / 10000 % 10 << "."
     << (unsigned)__BUILD_NUMBER / 1000 % 10 << "."
@@ -261,16 +261,16 @@ GFXglyph grabGlyph(const Bitmap &image, int width, int height, int gap, int n, s
     size_t length = encode(section, data);
     free(section.data);
     
-    GFXglyph g;
-    g.width = bounds.right - bounds.left + 1;
-    g.height = bounds.bottom - bounds.top + 1;
-    g.dX = bounds.left;
-    g.dY = -height + bounds.top;
+    GFXglyph gfxGlyph;
+    gfxGlyph.width = bounds.right - bounds.left + 1;
+    gfxGlyph.height = bounds.bottom - bounds.top + 1;
+    gfxGlyph.dX = bounds.left;
+    gfxGlyph.dY = -height + bounds.top;
     if (gap < 1) {
-        g.xAdvance = width;//g.cols + g.x + gap;
+        gfxGlyph.xAdvance = width;//g.cols + g.x + gap;
     }
-    g.offset = (uint8_t)length;
-    return g;
+    gfxGlyph.offset = (uint8_t)length;
+    return gfxGlyph;
 }
 
 void create(std::string &filename, std::string &name, int width, int height, int gap)
@@ -350,18 +350,6 @@ void create(std::string &filename, std::string &name, int width, int height, int
         outfile.close();
     }
 }
-
-/*
- const uint8_t pc_Bitmaps[] PROGMEM = {
-   0x6F, 0xFF, 0xFF, 0xFF, 0xF6, 0x66, 0x60, 0x06, 0xFF, 0x60, 0x61, 0xBC,
-   0xFF, 0x3D, 0xC7, 0x30, 0xD8, 0x6C
- };
-
- const GFXglyph pc_Glyphs[] PROGMEM = {
-   {     0,   4,  19,  18,    7,  -23 },   // 0x21 '!'
-   {    10,  10,   7,  18,    4,  -23 }    // 0x22 '"'
- };
- */
 
 int main(int argc, const char * argv[])
 {
