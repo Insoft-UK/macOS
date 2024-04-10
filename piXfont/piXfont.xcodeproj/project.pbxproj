@@ -27,6 +27,7 @@
 		1328C27A2BC5E554003C4B3A /* fxCG50.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fxCG50.h; sourceTree = "<group>"; };
 		1328C27B2BC5E5A2003C4B3A /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = SOURCE_ROOT; };
 		1328C27C2BC5E5E2003C4B3A /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
+		1328C27F2BC61D03003C4B3A /* GFXFont.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFXFont.h; sourceTree = "<group>"; };
 		84764225189579CD00AFBE9C /* piXfont */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = piXfont; sourceTree = BUILT_PRODUCTS_DIR; };
 		84764228189579CD00AFBE9C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -72,6 +73,7 @@
 			isa = PBXGroup;
 			children = (
 				84764228189579CD00AFBE9C /* main.cpp */,
+				1328C27F2BC61D03003C4B3A /* GFXFont.h */,
 				1328C27B2BC5E5A2003C4B3A /* Makefile */,
 				1328C27C2BC5E5E2003C4B3A /* README.md */,
 			);

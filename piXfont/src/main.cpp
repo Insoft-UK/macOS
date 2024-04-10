@@ -29,31 +29,7 @@
 #include <fstream>
 #include <iomanip>
 
-typedef struct __attribute__((__packed__)) {
-    uint16_t offset;  // Offset address to the bitmap data for this glypth.
-    uint8_t  cols;   // Bitmap dimensions in pixels.
-    uint8_t  rows;  // Bitmap dimensions in pixels.
-    uint8_t  advance; // Distance to advance cursor (x-axis).
-    int8_t   x;       // X distance from cursor position to upper left corner.
-    int8_t   baseline;       // Y dist from cursor position to upper left corner.
-} GFXglyph;
-
-/*
- Cols
- Rows
- XAdv
- base - 8 for top or 0 for bottom
- XOff
- */
-
-typedef struct __attribute__((__packed__)) {
-    uint8_t *bitmap;  // Glyph bitmaps, packed.
-    GFXglyph   *glyph;   // Glyph array.
-    uint16_t first;   // ASCII extents (first char)
-    uint16_t last;    // ASCII extents (last char)
-    uint8_t  newline; // Newline distance (y axis)
-    void *data;
-} GFXfont;
+#include "GFXFont.h"
 
 typedef struct __attribute__((__packed__)) {
     uint16_t width;
@@ -87,13 +63,13 @@ T swap_endian(T u)
 void usage(void)
 {
     std::cout << "Copyright (c) 2023 Insoft. All rights reserved\n";
-    std::cout << "The Atari ST/STE NeoChrome image file converter\n";
-    std::cout << "Usage: μfont in-file [-o out-file]\n";
+    std::cout << "Adafruit GFX Pixel font creator\n";
+    std::cout << "Usage: pixfont in-file [-o out-file]\n";
 }
 
 void error(void)
 {
-    std::cout << "μfont: try 'μfont --help' for more information\n";
+    std::cout << "pixfont: try 'pixfont --help' for more information\n";
 }
 
 void version(void) {
@@ -286,12 +262,12 @@ GFXglyph grabGlyph(const Bitmap &image, int width, int height, int gap, int n, s
     free(section.data);
     
     GFXglyph g;
-    g.cols = bounds.right - bounds.left + 1;
-    g.rows = bounds.bottom - bounds.top + 1;
-    g.x = bounds.left;
-    g.baseline = -height + bounds.top;
+    g.width = bounds.right - bounds.left + 1;
+    g.height = bounds.bottom - bounds.top + 1;
+    g.dX = bounds.left;
+    g.dY = -height + bounds.top;
     if (gap < 1) {
-        g.advance = width;//g.cols + g.x + gap;
+        g.xAdvance = width;//g.cols + g.x + gap;
     }
     g.offset = (uint8_t)length;
     return g;
@@ -323,15 +299,15 @@ void create(std::string &filename, std::string &name, int width, int height, int
         std::setw(5) <<
         (int)fontGlyph.offset << "," <<
         std::setw(3) <<
-        (int)fontGlyph.cols << "," <<
+        (int)fontGlyph.width << "," <<
         std::setw(3) <<
-        (int)fontGlyph.rows << "," <<
+        (int)fontGlyph.height << "," <<
         std::setw(3) <<
-        (int)fontGlyph.advance << "," <<
+        (int)fontGlyph.xAdvance << "," <<
         std::setw(3) <<
-        (int)fontGlyph.x << "," <<
+        (int)fontGlyph.dX << "," <<
         std::setw(4) <<
-        (int)fontGlyph.baseline;
+        (int)fontGlyph.dY;
         
         if (n<93) {
             osGlyph << " }, // 0x" << std::setw(2) << std::hex << (n + '!') << std::dec << " '" << (char)(n + '!') << "'";
@@ -343,9 +319,9 @@ void create(std::string &filename, std::string &name, int width, int height, int
     
     free(image.data);
     
-    osBitmaps << "#ifndef ARDUINO\n    #define PROGRAM\n#endif\n\n"
-    << "#ifndef _" << name << "_h\n"
-    << "#define _" << name << "_h\n\n"
+    osBitmaps << "#ifndef ARDUINO\n    #define PROGMEM\n#endif\n\n"
+    << "#ifndef " << name << "_h\n"
+    << "#define " << name << "_h\n\n"
     << "const uint8_t " << name << "_Bitmaps[] PROGMEM = {\n    "
     << std::setfill('0') << std::setw(2) << std::hex;
     for (int n=0; n<data.size(); n++) {
@@ -356,9 +332,9 @@ void create(std::string &filename, std::string &name, int width, int height, int
     }
     osBitmaps << "\n};\n";
     
-    osFont << "const GFXfont " << name << " PROGRAM = {(uint8_t *) " << name << "_Bitmaps, (GFXglyph *) " << name << "_Glyphs, ";
+    osFont << "const GFXfont " << name << " PROGMEM = {(uint8_t *) " << name << "_Bitmaps, (GFXglyph *) " << name << "_Glyphs, ";
     osFont << 0x21 << ", " << 0x7e << ", " << height << "};\n\n"
-    << "#endif";
+    << "#endif /* " << name << "_h */\n";
     
     std::ofstream outfile;
     std::string path;

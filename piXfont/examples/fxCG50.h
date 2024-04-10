@@ -1,9 +1,9 @@
 #ifndef ARDUINO
-    #define PROGRAM
+    #define PROGMEM
 #endif
 
-#ifndef _fxCG50_h
-#define _fxCG50_h
+#ifndef fxCG50_h
+#define fxCG50_h
 
 const uint8_t fxCG50_Bitmaps[] PROGMEM = {
     0x6f, 0xff, 0xff, 0xff, 0xf6, 0x66, 0x60, 0x06, 0xff, 0x60, 0x61, 0xbc, 0xff, 0x3d, 0xc7, 0x30, 0xd8, 0x6c, 0x30, 0x0c, 0x30, 0x30, 0xc0, 0xc3, 0x03, 0x0c, 0x0c, 0x33, 0xff, 0xff, 0xff, 0xc6,
@@ -182,6 +182,6 @@ const GFXglyph fxCG50_Glyphs[] PROGMEM = {
     {  2480,  9, 22, 18,  4, -24 }, // 0x7d '}'
     {  2505, 15,  5, 18,  2, -15 }  // 0x7e '~'
 };
-const GFXfont fxCG50 PROGRAM = {(uint8_t *) fxCG50_Bitmaps, (GFXglyph *) fxCG50_Glyphs, 33, 126, 24};
+const GFXfont fxCG50 PROGMEM = {(uint8_t *) fxCG50_Bitmaps, (GFXglyph *) fxCG50_Glyphs, 33, 126, 24};
 
-#endif
+#endif /* fxCG50_h */
