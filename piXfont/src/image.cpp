@@ -20,23 +20,21 @@
  THE SOFTWARE.
  */
 
-#include "bitmaps.hpp"
-
+#include "image.hpp"
 
 #include <fstream>
-
-Bitmap *pbm(std::string &filename)
+Image *loadPBGraphicFile(std::string &filename)
 {
     std::ifstream infile;
     
-    Bitmap *bitmap = (Bitmap *)malloc(sizeof(Bitmap));
-    if (!bitmap) {
+    Image *image = (Image *)malloc(sizeof(Image));
+    if (!image) {
         return nullptr;
     }
     
     infile.open(filename, std::ios::in | std::ios::binary);
     if (!infile.is_open()) {
-        free(bitmap);
+        free(image);
         return nullptr;
     }
     
@@ -45,49 +43,73 @@ Bitmap *pbm(std::string &filename)
     getline(infile, s);
     if (s != "P4") {
         infile.close();
-        return bitmap;
+        return image;
     }
     
-    getline(infile, s);
-    bitmap->width = atoi(s.c_str());
+    image->type = ImageType_Bitmap;
     
     getline(infile, s);
-    bitmap->height = atoi(s.c_str());
+    image->width = atoi(s.c_str());
     
-    size_t length = ((bitmap->width + 7) >> 3) * bitmap->height;
-    bitmap->data = (unsigned char *)malloc(length);
+    getline(infile, s);
+    image->height = atoi(s.c_str());
     
-    if (!bitmap->data) {
-        free(bitmap);
+    size_t length = ((image->width + 7) >> 3) * image->height;
+    image->data = (unsigned char *)malloc(length);
+    
+    if (!image->data) {
+        free(image);
         infile.close();
         return nullptr;
     }
-    infile.read((char *)bitmap->data, length);
+    infile.read((char *)image->data, length);
     
     infile.close();
-    return bitmap;
+    return image;
 }
 
-Bitmap *createBitmap(int w, int h)
+Image *createBitmap(int w, int h)
 {
-    Bitmap *bitmap = (Bitmap *)malloc(sizeof(Bitmap));
-    if (!bitmap) {
+    Image *image = (Image *)malloc(sizeof(Image));
+    if (!image) {
         return nullptr;
     }
     
-    bitmap->data = malloc(w * h);
-    if (!bitmap->data) {
-        reset(bitmap);
+    w = (w + 7) & ~7;
+    image->data = malloc(w * h / 8);
+    if (!image->data) {
+        free(image);
         return nullptr;
     }
     
-    bitmap->width = w;
-    bitmap->height = h;
+    image->type = ImageType_Bitmap;
+    image->width = w;
+    image->height = h;
     
-    return bitmap;
+    return image;
 }
 
-void copyBitmap(const Bitmap *dst, int dx, int dy, const Bitmap *src, int x, int y, uint16_t w, uint16_t h)
+Image *createPixmap(int w, int h)
+{
+    Image *image = (Image *)malloc(sizeof(Image));
+    if (!image) {
+        return nullptr;
+    }
+    
+    image->data = malloc(w * h);
+    if (!image->data) {
+        free(image);
+        return nullptr;
+    }
+    
+    image->type = ImageType_Pixmap;
+    image->width = w;
+    image->height = h;
+    
+    return image;
+}
+
+void copyPixmap(const Image *dst, int dx, int dy, const Image *src, int x, int y, uint16_t w, uint16_t h)
 {
     uint8_t *d = (uint8_t *)dst->data;
     uint8_t *s = (uint8_t *)src->data;
@@ -103,14 +125,9 @@ void copyBitmap(const Bitmap *dst, int dx, int dy, const Bitmap *src, int x, int
     }
 }
 
-/**
- @brief    Converts a given monochrome image to a 256 bitmap image.
- @param    monochrome   The monochrome image to convert.
- */
-Bitmap *expand(const Bitmap *monochrome)
+Image *convertMonochromeBitmapToPixmap(const Image *monochrome)
 {
-    Bitmap *image;
-    image = (Bitmap *)malloc(sizeof(Bitmap));
+    Image *image = (Image *)malloc(sizeof(Image));
     if (!image)
         return nullptr;
     
@@ -144,11 +161,11 @@ Bitmap *expand(const Bitmap *monochrome)
     return image;
 }
 
-void reset(Bitmap *&bitmap)
+void reset(Image *&image)
 {
-    if (bitmap) {
-        if (bitmap->data) free(bitmap->data);
-        free(bitmap);
-        bitmap = nullptr;
+    if (image) {
+        if (image->data) free(image->data);
+        free(image);
+        image = nullptr;
     }
 }

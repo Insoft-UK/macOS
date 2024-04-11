@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1328C2842BC6E8FD003C4B3A /* bitmaps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1328C2832BC6E355003C4B3A /* bitmaps.cpp */; };
+		1328C2842BC6E8FD003C4B3A /* image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1328C2832BC6E355003C4B3A /* image.cpp */; };
 		84764229189579CD00AFBE9C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84764228189579CD00AFBE9C /* main.cpp */; };
 /* End PBXBuildFile section */
 
@@ -29,10 +29,11 @@
 		1328C27B2BC5E5A2003C4B3A /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = SOURCE_ROOT; };
 		1328C27C2BC5E5E2003C4B3A /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		1328C27F2BC61D03003C4B3A /* GFXFont.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFXFont.h; sourceTree = "<group>"; };
-		1328C2822BC6E355003C4B3A /* bitmaps.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = bitmaps.hpp; sourceTree = "<group>"; };
-		1328C2832BC6E355003C4B3A /* bitmaps.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bitmaps.cpp; sourceTree = "<group>"; };
+		1328C2822BC6E355003C4B3A /* image.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = image.hpp; sourceTree = "<group>"; };
+		1328C2832BC6E355003C4B3A /* image.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = image.cpp; sourceTree = "<group>"; };
 		1328C2882BC733B7003C4B3A /* C437.pbm */ = {isa = PBXFileReference; lastKnownFileType = file; path = C437.pbm; sourceTree = "<group>"; };
 		1328C2892BC733BF003C4B3A /* C437.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = C437.h; sourceTree = "<group>"; };
+		1328C28B2BC844A4003C4B3A /* build.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = build.txt; sourceTree = "<group>"; };
 		84764225189579CD00AFBE9C /* piXfont */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = piXfont; sourceTree = BUILT_PRODUCTS_DIR; };
 		84764228189579CD00AFBE9C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -82,9 +83,10 @@
 				84764228189579CD00AFBE9C /* main.cpp */,
 				1328C27F2BC61D03003C4B3A /* GFXFont.h */,
 				1328C27B2BC5E5A2003C4B3A /* Makefile */,
+				1328C2822BC6E355003C4B3A /* image.hpp */,
+				1328C2832BC6E355003C4B3A /* image.cpp */,
 				1328C27C2BC5E5E2003C4B3A /* README.md */,
-				1328C2822BC6E355003C4B3A /* bitmaps.hpp */,
-				1328C2832BC6E355003C4B3A /* bitmaps.cpp */,
+				1328C28B2BC844A4003C4B3A /* build.txt */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -96,6 +98,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8476422E189579CD00AFBE9C /* Build configuration list for PBXNativeTarget "piXfont" */;
 			buildPhases = (
+				1328C28A2BC83B5A003C4B3A /* ShellScript */,
 				84764221189579CD00AFBE9C /* Sources */,
 				84764222189579CD00AFBE9C /* Frameworks */,
 				84764223189579CD00AFBE9C /* CopyFiles */,
@@ -137,13 +140,34 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		1328C28A2BC83B5A003C4B3A /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Increment version number by 0.001, allowing 1000 builds before version number is increased.\nbuild=( $(cat src/build.txt) )\nbuild=$(($build+1))\necho $build > src/build.txt\necho \"unsigned __BUILD_NUMBER=$build;\" > src/build.h\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		84764221189579CD00AFBE9C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				84764229189579CD00AFBE9C /* main.cpp in Sources */,
-				1328C2842BC6E8FD003C4B3A /* bitmaps.cpp in Sources */,
+				1328C2842BC6E8FD003C4B3A /* image.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
