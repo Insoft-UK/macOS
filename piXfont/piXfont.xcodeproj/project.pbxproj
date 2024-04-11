@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1328C2842BC6E8FD003C4B3A /* bitmaps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1328C2832BC6E355003C4B3A /* bitmaps.cpp */; };
 		84764229189579CD00AFBE9C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84764228189579CD00AFBE9C /* main.cpp */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +29,12 @@
 		1328C27B2BC5E5A2003C4B3A /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = SOURCE_ROOT; };
 		1328C27C2BC5E5E2003C4B3A /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		1328C27F2BC61D03003C4B3A /* GFXFont.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFXFont.h; sourceTree = "<group>"; };
+		1328C2822BC6E355003C4B3A /* bitmaps.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = bitmaps.hpp; sourceTree = "<group>"; };
+		1328C2832BC6E355003C4B3A /* bitmaps.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bitmaps.cpp; sourceTree = "<group>"; };
+		1328C2852BC7305B003C4B3A /* common.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = "<group>"; };
+		1328C2862BC7305B003C4B3A /* common.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = common.hpp; sourceTree = "<group>"; };
+		1328C2882BC733B7003C4B3A /* C437.pbm */ = {isa = PBXFileReference; lastKnownFileType = file; path = C437.pbm; sourceTree = "<group>"; };
+		1328C2892BC733BF003C4B3A /* C437.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = C437.h; sourceTree = "<group>"; };
 		84764225189579CD00AFBE9C /* piXfont */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = piXfont; sourceTree = BUILT_PRODUCTS_DIR; };
 		84764228189579CD00AFBE9C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -48,6 +55,8 @@
 			children = (
 				1328C2792BC5E554003C4B3A /* fx-CG50.pbm */,
 				1328C27A2BC5E554003C4B3A /* fxCG50.h */,
+				1328C2882BC733B7003C4B3A /* C437.pbm */,
+				1328C2892BC733BF003C4B3A /* C437.h */,
 			);
 			path = examples;
 			sourceTree = SOURCE_ROOT;
@@ -76,6 +85,10 @@
 				1328C27F2BC61D03003C4B3A /* GFXFont.h */,
 				1328C27B2BC5E5A2003C4B3A /* Makefile */,
 				1328C27C2BC5E5E2003C4B3A /* README.md */,
+				1328C2822BC6E355003C4B3A /* bitmaps.hpp */,
+				1328C2832BC6E355003C4B3A /* bitmaps.cpp */,
+				1328C2852BC7305B003C4B3A /* common.cpp */,
+				1328C2862BC7305B003C4B3A /* common.hpp */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -134,6 +147,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				84764229189579CD00AFBE9C /* main.cpp in Sources */,
+				1328C2842BC6E8FD003C4B3A /* bitmaps.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

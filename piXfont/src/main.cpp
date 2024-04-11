@@ -30,41 +30,13 @@
 #include <iomanip>
 
 #include "GFXFont.h"
-
-typedef struct __attribute__((__packed__)) {
-    uint16_t width;
-    uint16_t height;
-    void *data;
-} Bitmap;
-
-typedef struct __attribute__((__packed__)) {
-    uint16_t left, right, top, bottom;
-} Bounds;
-
-template <typename T>
-T swap_endian(T u)
-{
-    static_assert (CHAR_BIT == 8, "CHAR_BIT != 8");
-
-    union
-    {
-        T u;
-        unsigned char u8[sizeof(T)];
-    } source, dest;
-
-    source.u = u;
-
-    for (size_t k = 0; k < sizeof(T); k++)
-        dest.u8[k] = source.u8[sizeof(T) - k - 1];
-
-    return dest.u;
-}
+#include "bitmaps.hpp"
 
 void usage(void)
 {
     std::cout << "Copyright (c) 2023 Insoft. All rights reserved\n";
     std::cout << "Adafruit GFX Pixel font creator\n";
-    std::cout << "Usage: pixfont in-file [-o out-file]\n";
+    std::cout << "Usage: pixfont in-file -w [width] -h [height] [-o out-file]\n";
 }
 
 void error(void)
@@ -83,106 +55,72 @@ void version(void) {
     << "\n";
 }
 
-std::ifstream::pos_type filesize(std::string &filename)
+GFXglyph autoGFXglyphSettings(Bitmap *image)
 {
-    std::ifstream in(filename, std::ifstream::ate | std::ifstream::binary);
-    std::ifstream::pos_type pos = in.tellg();
-    in.close();
-    return pos;
-}
-
-Bitmap pbm(std::string &filename)
-{
-    std::ifstream infile;
-    size_t fsize;
-    Bitmap bitmap = {0};
+    GFXglyph gfxGlyph;
+    int minX, maxX, minY, maxY;
     
-    fsize = filesize(filename);
+    if (!image || !image->data) return gfxGlyph;
     
-    infile.open(filename, std::ios::in | std::ios::binary);
-    if (!infile.is_open())
-        return bitmap;
+    uint8_t *p = (uint8_t *)image->data;
     
-    std::string s;
+    maxX = 0;
+    maxY = 0;
+    minX = image->width - 1;
+    minY = image->height - 1;
     
-    getline(infile, s);
-    if (s != "P4") {
-        infile.close();
-        return bitmap;
-    }
     
-    getline(infile, s);
-    bitmap.width = atoi(s.c_str());
-    
-    getline(infile, s);
-    bitmap.height = atoi(s.c_str());
-    
-    size_t length = ((bitmap.width + 7) >> 3) * bitmap.height;
-    bitmap.data = (unsigned char *)malloc(length);
-    infile.read((char *)bitmap.data, length);
-    
-    infile.close();
-    return bitmap;
-}
-
-Bounds boundary(Bitmap &image)
-{
-    Bounds b = {
-        .left = image.width,
-        .right = 0,
-        .top = image.height,
-        .bottom = 0
-    };
-    
-    uint8_t *p = (uint8_t *)image.data;
-    
-    for (int y=0; y<image.height; y++) {
-        for (int x=0; x<image.width; x++) {
-            if (p[x + y * image.width]) {
-                if (x < b.left) b.left = x;
-                if (x > b.right) b.right = x;
-                if (y < b.top) b.top = y;
-                if (y > b.bottom) b.bottom = y;
-            }
-        }
-    }
-    return b;
-}
-
-Bitmap grab(const Bitmap &image, const Bounds &bounds)
-{
-    Bitmap bitmap = {0};
-    bitmap.width = bounds.right - bounds.left + 1;
-    bitmap.height = bounds.bottom - bounds.top + 1;
-    bitmap.data = (unsigned char *)malloc(bitmap.width * bitmap.height);
-    
-    if (!image.data) return bitmap;
-    if (!bitmap.data) return bitmap;
-    
-    uint8_t *dest = (uint8_t *)bitmap.data;
-    uint8_t *src = (uint8_t *)image.data;
-    
-    for (int y=0; y<bitmap.height; y++) {
-        for (int x=0; x<bitmap.width; x++) {
-            dest[x + y * bitmap.width] = src[bounds.left + x + (bounds.top + y) * image.width];
+    for (int y=0; y<image->height; y++) {
+        for (int x=0; x<image->width; x++) {
+            if (!p[x + y * image->width]) continue;
+            if (x < minX) minX = x;
+            if (x > maxX) maxX = x;
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
         }
     }
     
-    return bitmap;
+    if (maxX < minX || maxY < minY) {
+        minX = minY = 0;
+        maxX = 8;
+        maxY = 16;
+    }
+    
+    gfxGlyph.offset = 0;
+    gfxGlyph.width = maxX - minX + 1;
+    gfxGlyph.height = maxY - minY + 1;
+    gfxGlyph.xAdvance = image->width;
+    gfxGlyph.dX = minX;
+    gfxGlyph.dY = -image->height + minY;
+    
+    return gfxGlyph;
 }
+
+bool isGlyphImageBlank(const Bitmap *image)
+{
+    if (!image || !image->data) return true;
+    
+    uint8_t *p = (uint8_t *)image->data;
+    for (int l=0; image->width * image->height; l++) {
+        if (*p++) return false;
+    }
+    
+    return true;
+}
+
 
 /**
  @brief    Writes to the file from a given  256 bitmap image into a series of ones and zeros.
  @param    image   The 256 bitmap image.
  @param    outfile   The out stream for the file
  */
-size_t encode(Bitmap &image, std::vector<uint8_t> &data)
+size_t encode(Bitmap *image, std::vector<uint8_t> &data)
 {
-    uint8_t *p = (uint8_t *)image.data;
+    uint8_t *p = (uint8_t *)image->data;
     uint8_t bitPosition = 1 << 7;
     uint8_t byte = 0;
     
-    for (int i = 0; i < image.width * image.height; i++) {
+    for (int i = 0; i < image->width * image->height; i++) {
         if(!bitPosition) bitPosition = 1 << 7;
         if (p[i])
             byte |= bitPosition;
@@ -196,145 +134,118 @@ size_t encode(Bitmap &image, std::vector<uint8_t> &data)
         data.push_back(byte);
     }
     
-    return (image.width * image.height + 7) / 8;
-}
-
-/**
- @brief    Converts a given monochrome image to a 256 bitmap image.
- @param    monochrome   The monochrome image to convert.
- */
-Bitmap expand(const Bitmap &monochrome)
-{
-    Bitmap image = {0};
-    uint8_t *src = (uint8_t *)monochrome.data;
-    uint8_t bitPosition = 1 << 7;
-    
-    image.width = monochrome.width;
-    image.height = monochrome.height;
-    image.data = malloc(image.width * image.height);
-    if (!image.data) return image;
-    
-    memset(image.data, 0, image.width * image.height);
-    
-    uint8_t *dest = (uint8_t *)image.data;
-    
-    for (int y=0; y<monochrome.height; y++) {
-        bitPosition = 1 << 7;
-        for (int x=0; x<monochrome.width; x++) {
-            if (bitPosition == 0) {
-                bitPosition = 1 << 7;
-                src++;
-            }
-            *dest++ = (*src & bitPosition ? 1 : 0);
-            bitPosition >>= 1;
-        }
-        if (bitPosition > 0) {
-            src++;
-        }
-    }
-    
-    return image;
-}
-
-Bounds glyphBounds(const Bitmap &image, int width, int height, int n)
-{
-    int col = image.width / width;
-    
-    Bounds bounds;
-    bounds.left = (n % col) * width;
-    bounds.top = (n / col) * height;
-    bounds.right = bounds.left + width - 1;
-    bounds.bottom = bounds.top + height - 1;
-    return bounds;
+    return (image->width * image->height + 7) / 8;
 }
 
 
-GFXglyph grabGlyph(const Bitmap &image, int width, int height, int gap, int n, std::vector<uint8_t> &data)
-{
-    Bounds bounds = glyphBounds(image, width, height, n);
-    Bitmap bitmap = grab(image, bounds);
-    
-    bounds = boundary(bitmap);
-    Bitmap section = grab(bitmap, bounds);
-    free(bitmap.data);
-    
-    size_t length = encode(section, data);
-    free(section.data);
-    
-    GFXglyph gfxGlyph;
-    gfxGlyph.width = bounds.right - bounds.left + 1;
-    gfxGlyph.height = bounds.bottom - bounds.top + 1;
-    gfxGlyph.dX = bounds.left;
-    gfxGlyph.dY = -height + bounds.top;
-    if (gap < 1) {
-        gfxGlyph.xAdvance = width;//g.cols + g.x + gap;
-    }
-    gfxGlyph.offset = (uint8_t)length;
-    return gfxGlyph;
-}
 
-void create(std::string &filename, std::string &name, int width, int height, int gap)
+
+void create(std::string &filename, std::string &name, GFXfont &gfxFont, int width, int hs, int vs)
 {
-    Bitmap monochrome;
+    Bitmap *monochrome;
     monochrome = pbm(filename);
     
-    Bitmap image = expand(monochrome);
-    free(monochrome.data);
-    
-    
-    std::vector<uint8_t> data;
-    std::ostringstream osBitmaps, osGlyph, osFont;
-    
-    uint16_t offset = 0;
-    osGlyph << "const GFXglyph " << name << "_Glyphs[] PROGMEM = {";
-    
-    for (int n=0; n<94; n++) {
-        GFXglyph fontGlyph = grabGlyph(image, width, height, gap, n, data);
-        
-        uint16_t length = fontGlyph.offset;
-        fontGlyph.offset = offset;
-        offset += length;
-        
-        osGlyph << "\n    { " <<
-        std::setw(5) <<
-        (int)fontGlyph.offset << "," <<
-        std::setw(3) <<
-        (int)fontGlyph.width << "," <<
-        std::setw(3) <<
-        (int)fontGlyph.height << "," <<
-        std::setw(3) <<
-        (int)fontGlyph.xAdvance << "," <<
-        std::setw(3) <<
-        (int)fontGlyph.dX << "," <<
-        std::setw(4) <<
-        (int)fontGlyph.dY;
-        
-        if (n<93) {
-            osGlyph << " }, // 0x" << std::setw(2) << std::hex << (n + '!') << std::dec << " '" << (char)(n + '!') << "'";
-        } else {
-            osGlyph << " }  // 0x" << std::setw(2) << std::hex << (n + '!') << std::dec << " '" << (char)(n + '!') << "'";
-            osGlyph << "\n};\n";
-        }
+    if (!monochrome) {
+        std::cout << "Unable to load file " << filename << ".\n";
+        return;
     }
     
-    free(image.data);
+    if ((width + hs) * (gfxFont.yAdvance + vs) * (gfxFont.last - gfxFont.first + 1) > monochrome->width * monochrome->height) {
+        std::cout << "The extraction of glyphs from the provided bitmap image exceeds what is possible based on the image dimensions.\n";
+        reset(monochrome);
+        return;
+    }
     
-    osBitmaps << "#ifndef ARDUINO\n    #define PROGMEM\n#endif\n\n"
+    Bitmap *image = expand(monochrome);
+    if (!image) {
+        std::cout << "#ERROR! Failed to Allocate Memory.\n";
+        reset(monochrome);
+        return;
+    }
+    
+    reset(monochrome);
+    
+    std::vector<uint8_t> data;
+    std::ostringstream osGlyph;
+    
+    uint16_t offset = 0;
+    osGlyph << "const GFXglyph " << name << "_Glyphs[] PROGMEM = {"; // " << (parameters.l - parameters.f + 1) << "
+    
+    
+    Bitmap *bitmap = createBitmap(width, gfxFont.yAdvance);
+    
+    
+    int glyphs = gfxFont.last - gfxFont.first + 1;
+    for (int n = 0; n < glyphs; n++) {
+        int col = image->width / (width + hs);
+        int x = (n % col) * (width + hs);
+        int y = (n / col) * (gfxFont.yAdvance + vs);
+        copyBitmap(bitmap, 0, 0, image, x, y, bitmap->width, bitmap->height);
+        
+        GFXglyph gfxGlyph = {
+            offset, 
+            static_cast<uint8_t>(width),
+            static_cast<uint8_t>(gfxFont.yAdvance),
+            static_cast<uint8_t>(width),
+            0,
+            static_cast<int8_t>(-gfxFont.yAdvance)
+        };
+        if (!isGlyphImageBlank(bitmap)) {
+            
+            gfxGlyph = autoGFXglyphSettings(bitmap);
+            Bitmap *section = createBitmap(gfxGlyph.width, gfxGlyph.height);
+            if (!section) {
+                std::cout << "#ERROR! #001.\n";
+                reset(bitmap);
+                reset(image);
+                return;
+            }
+            copyBitmap(section, 0, 0, bitmap, gfxGlyph.dX, gfxGlyph.dY + gfxFont.yAdvance, gfxGlyph.width, gfxGlyph.height);
+
+            size_t length = encode(section, data);
+            reset(section);
+            
+            
+            gfxGlyph.offset = offset;
+            offset += length;
+        }
+        
+        osGlyph << "\n    { " << std::setw(5) << (int)gfxGlyph.offset << "," << std::setw(3) << (int)gfxGlyph.width << "," << std::setw(3) << (int)gfxGlyph.height << "," << std::setw(3) << (int)gfxGlyph.xAdvance << "," << std::setw(3) << (int)gfxGlyph.dX << "," << std::setw(4) << (int)gfxGlyph.dY;
+        char charactor = n + gfxFont.first;
+        if (charactor < ' ') charactor = ' ';
+        
+        if (n < glyphs - 1) {
+            osGlyph << " }, // 0x" << std::setw(2) << std::hex << (n + gfxFont.first) << std::dec << " '" << charactor << "'";
+        } else {
+            osGlyph << " }  // 0x" << std::setw(2) << std::hex << (n + gfxFont.first) << std::dec << " '" << charactor << "'";
+            osGlyph << "\n};\n";
+        }
+        
+        
+    }
+    
+    reset(bitmap);
+    reset(image);
+    
+    std::ostringstream os;
+    
+    os << "#ifndef PROGMEM\n    #define PROGMEM /* None Arduino */\n#endif\n\n"
     << "#ifndef " << name << "_h\n"
     << "#define " << name << "_h\n\n"
     << "const uint8_t " << name << "_Bitmaps[] PROGMEM = {\n    "
-    << std::setfill('0') << std::setw(2) << std::hex;
-    for (int n=0; n<data.size(); n++) {
-        if (n % 32) osBitmaps << " ";
-        osBitmaps << "0x" << std::setw(2) << (int)data.at(n);
-        if (n<data.size()-1) osBitmaps << ",";
-        if (n % 32 == 31) osBitmaps << "\n    ";
+    << std::setfill('0') << std::setw(2) << std::hex; // " << data.size() << "
+    for (int n = 0; n < data.size(); n++) {
+        if (n % 12) os << " ";
+        os << "0x" << std::setw(2) << (int)data.at(n);
+        if (n < data.size()-1) os << ",";
+        if (n % 12 == 11) os << "\n    ";
     }
-    osBitmaps << "\n};\n";
+    os << "\n};\n\n";
     
-    osFont << "const GFXfont " << name << " PROGMEM = {(uint8_t *) " << name << "_Bitmaps, (GFXglyph *) " << name << "_Glyphs, ";
-    osFont << 0x21 << ", " << 0x7e << ", " << height << "};\n\n"
-    << "#endif /* " << name << "_h */\n";
+    os << osGlyph.str() << std::dec;
+    
+    os << "\nconst GFXfont " << name << " PROGMEM = {(uint8_t *) " << name << "_Bitmaps, (GFXglyph *) " << name << "_Glyphs, ";
+    os << gfxFont.first << ", " << gfxFont.last << ", " << (int)gfxFont.yAdvance << "};\n\n" << "#endif /* " << name << "_h */\n";
     
     std::ofstream outfile;
     std::string path;
@@ -344,22 +255,22 @@ void create(std::string &filename, std::string &name, int width, int height, int
     
     outfile.open(path + name + ".h", std::ios::out | std::ios::binary);
     if (outfile.is_open()) {
-        outfile.write(osBitmaps.str().c_str(), osBitmaps.str().length());
-        outfile.write(osGlyph.str().c_str(), osGlyph.str().length());
-        outfile.write(osFont.str().c_str(), osFont.str().length());
+        outfile.write(os.str().c_str(), os.str().length());
         outfile.close();
     }
 }
 
 int main(int argc, const char * argv[])
 {
-    int width, height, gap = 0;
     if ( argc == 1 ) {
         error();
         return 0;
     }
     
     std::string filename, name, prefix, sufix;
+    
+    GFXfont gfxFont = { 0, 0, 32, 95, 8 };
+    int width = 8, hs = 0, vs = 0;
     
     for( int n = 1; n < argc; n++ ) {
         if (*argv[n] == '-') {
@@ -388,18 +299,54 @@ int main(int argc, const char * argv[])
                     error();
                     return 0;
                 }
-                height = atoi(argv[n]);
+                gfxFont.yAdvance = atoi(argv[n]);
                 continue;
             }
             
-            if ( strcmp( argv[n], "-g" ) == 0 || strcmp( argv[n], "--gap" ) == 0 ) {
+            if ( strcmp( argv[n], "-f" ) == 0 || strcmp( argv[n], "--first" ) == 0 ) {
                 if ( ++n >= argc ) {
                     error();
                     return 0;
                 }
-                gap = atoi(argv[n]);
+                gfxFont.first = atoi(argv[n]);
                 continue;
             }
+            
+            if ( strcmp( argv[n], "-l" ) == 0 || strcmp( argv[n], "--last" ) == 0 ) {
+                if ( ++n >= argc ) {
+                    error();
+                    return 0;
+                }
+                gfxFont.last = atoi(argv[n]);
+                continue;
+            }
+            
+            if ( strcmp( argv[n], "-vs" ) == 0 ) {
+                if ( ++n >= argc ) {
+                    error();
+                    return 0;
+                }
+                vs = atoi(argv[n]);
+                continue;
+            }
+            
+            if ( strcmp( argv[n], "-hs" ) == 0 ) {
+                if ( ++n >= argc ) {
+                    error();
+                    return 0;
+                }
+                hs = atoi(argv[n]);
+                continue;
+            }
+            
+//            if ( strcmp( argv[n], "-x" ) == 0 ) {
+//                if ( ++n >= argc ) {
+//                    error();
+//                    return 0;
+//                }
+//                parameters.x = atoi(argv[n]);
+//                continue;
+//            }
             
             if ( strcmp( argv[n], "--help" ) == 0 ) {
                 usage();
@@ -423,8 +370,7 @@ int main(int argc, const char * argv[])
         name = name.substr(pos + 1, name.length() - pos);
     }
  
-    
-    create(filename, name, width, height, gap);
+    create(filename, name, gfxFont, width, hs, vs);
     
     return 0;
 }
