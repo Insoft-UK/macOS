@@ -29,7 +29,7 @@
 		137976372BBF8B6F0095FC27 /* BULL.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = BULL.bmp; sourceTree = "<group>"; };
 		137976382BBF8B940095FC27 /* TSTART.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = TSTART.bmp; sourceTree = "<group>"; };
 		137976392BBF8B9B0095FC27 /* WATRFALL.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = WATRFALL.bmp; sourceTree = "<group>"; };
-		84764225189579CD00AFBE9C /* neochrome */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = neochrome; sourceTree = BUILT_PRODUCTS_DIR; };
+		84764225189579CD00AFBE9C /* NeoChrome */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = NeoChrome; sourceTree = BUILT_PRODUCTS_DIR; };
 		84764228189579CD00AFBE9C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -69,7 +69,7 @@
 		84764226189579CD00AFBE9C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				84764225189579CD00AFBE9C /* neochrome */,
+				84764225189579CD00AFBE9C /* NeoChrome */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -85,9 +85,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		84764224189579CD00AFBE9C /* neochrome */ = {
+		84764224189579CD00AFBE9C /* NeoChrome */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8476422E189579CD00AFBE9C /* Build configuration list for PBXNativeTarget "neochrome" */;
+			buildConfigurationList = 8476422E189579CD00AFBE9C /* Build configuration list for PBXNativeTarget "NeoChrome" */;
 			buildPhases = (
 				84764221189579CD00AFBE9C /* Sources */,
 				84764222189579CD00AFBE9C /* Frameworks */,
@@ -97,9 +97,9 @@
 			);
 			dependencies = (
 			);
-			name = neochrome;
+			name = NeoChrome;
 			productName = neo2raw;
-			productReference = 84764225189579CD00AFBE9C /* neochrome */;
+			productReference = 84764225189579CD00AFBE9C /* NeoChrome */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -112,7 +112,7 @@
 				LastUpgradeCheck = 1530;
 				ORGANIZATIONNAME = Insoft;
 			};
-			buildConfigurationList = 84764220189579CD00AFBE9C /* Build configuration list for PBXProject "neochrome" */;
+			buildConfigurationList = 84764220189579CD00AFBE9C /* Build configuration list for PBXProject "NeoChrome" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -125,7 +125,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				84764224189579CD00AFBE9C /* neochrome */,
+				84764224189579CD00AFBE9C /* NeoChrome */,
 			);
 		};
 /* End PBXProject section */
@@ -214,7 +214,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
-				PRODUCT_NAME = neochrome;
+				PRODUCT_NAME = NeoChrome;
 			};
 			name = Debug;
 		};
@@ -222,14 +222,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
-				PRODUCT_NAME = neochrome;
+				PRODUCT_NAME = NeoChrome;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		84764220189579CD00AFBE9C /* Build configuration list for PBXProject "neochrome" */ = {
+		84764220189579CD00AFBE9C /* Build configuration list for PBXProject "NeoChrome" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8476422C189579CD00AFBE9C /* Debug */,
@@ -238,7 +238,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8476422E189579CD00AFBE9C /* Build configuration list for PBXNativeTarget "neochrome" */ = {
+		8476422E189579CD00AFBE9C /* Build configuration list for PBXNativeTarget "NeoChrome" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8476422F189579CD00AFBE9C /* Debug */,

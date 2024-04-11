@@ -88,7 +88,7 @@ void usage(void) {
 }
 
 void error(void) {
-    std::cout << "neochrome: try 'neochrome --help' for more information\n";
+    std::cout << "NeoChrome: try 'neochrome --help' for more information\n";
 }
 
 void version(void) {

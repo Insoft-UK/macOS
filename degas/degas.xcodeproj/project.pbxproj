@@ -25,7 +25,7 @@
 /* Begin PBXFileReference section */
 		137976372BBF8B6F0095FC27 /* OCEAN.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = OCEAN.bmp; sourceTree = "<group>"; };
 		137976432BC1D5F60095FC27 /* OCEAN.PI1 */ = {isa = PBXFileReference; lastKnownFileType = file; path = OCEAN.PI1; sourceTree = "<group>"; };
-		84764225189579CD00AFBE9C /* degas */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = degas; sourceTree = BUILT_PRODUCTS_DIR; };
+		84764225189579CD00AFBE9C /* Degas */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Degas; sourceTree = BUILT_PRODUCTS_DIR; };
 		84764228189579CD00AFBE9C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -61,7 +61,7 @@
 		84764226189579CD00AFBE9C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				84764225189579CD00AFBE9C /* degas */,
+				84764225189579CD00AFBE9C /* Degas */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -77,9 +77,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		84764224189579CD00AFBE9C /* degas */ = {
+		84764224189579CD00AFBE9C /* Degas */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8476422E189579CD00AFBE9C /* Build configuration list for PBXNativeTarget "degas" */;
+			buildConfigurationList = 8476422E189579CD00AFBE9C /* Build configuration list for PBXNativeTarget "Degas" */;
 			buildPhases = (
 				84764221189579CD00AFBE9C /* Sources */,
 				84764222189579CD00AFBE9C /* Frameworks */,
@@ -89,9 +89,9 @@
 			);
 			dependencies = (
 			);
-			name = degas;
+			name = Degas;
 			productName = neo2raw;
-			productReference = 84764225189579CD00AFBE9C /* degas */;
+			productReference = 84764225189579CD00AFBE9C /* Degas */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -104,7 +104,7 @@
 				LastUpgradeCheck = 1530;
 				ORGANIZATIONNAME = Insoft;
 			};
-			buildConfigurationList = 84764220189579CD00AFBE9C /* Build configuration list for PBXProject "degas" */;
+			buildConfigurationList = 84764220189579CD00AFBE9C /* Build configuration list for PBXProject "Degas" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -117,7 +117,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				84764224189579CD00AFBE9C /* degas */,
+				84764224189579CD00AFBE9C /* Degas */,
 			);
 		};
 /* End PBXProject section */
@@ -206,7 +206,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
-				PRODUCT_NAME = degas;
+				PRODUCT_NAME = Degas;
 			};
 			name = Debug;
 		};
@@ -214,14 +214,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
-				PRODUCT_NAME = degas;
+				PRODUCT_NAME = Degas;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		84764220189579CD00AFBE9C /* Build configuration list for PBXProject "degas" */ = {
+		84764220189579CD00AFBE9C /* Build configuration list for PBXProject "Degas" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8476422C189579CD00AFBE9C /* Debug */,
@@ -230,7 +230,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8476422E189579CD00AFBE9C /* Build configuration list for PBXNativeTarget "degas" */ = {
+		8476422E189579CD00AFBE9C /* Build configuration list for PBXNativeTarget "Degas" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8476422F189579CD00AFBE9C /* Debug */,
