@@ -8,7 +8,7 @@
 
 ## NeoChrome
 #### NeoChrome to BMP Converter
-- Converts an Atari ST neoChrome image file to a BMP file format.
+- Converts an Atari ST NeoChrome image file to a BMP file format.
 
 
 ## Degas
