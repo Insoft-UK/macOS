@@ -315,6 +315,6 @@ const GFXglyph fxCG50_Glyphs[] PROGMEM = {
     {  2505, 15,  5, 18,  2, -15 }  // 0x7e '~'
 };
 
-const GFXfont fxCG50 PROGMEM = {(uint8_t *) fxCG50_Bitmaps, (GFXglyph *) fxCG50_Glyphs, 21, 7e, 18};
+const GFXfont fxCG50 PROGMEM = {(uint8_t *) fxCG50_Bitmaps, (GFXglyph *) fxCG50_Glyphs, 33, 126, 24};
 
 #endif /* fxCG50_h */
