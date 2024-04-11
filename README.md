@@ -6,8 +6,8 @@
 - Creates an Adafruit GFX Font file from a given PBM P4 file.
 
 
-## neoChrome
-#### neoChrome to BMP Converter
+## NeoChrome
+#### NeoChrome to BMP Converter
 - Converts an Atari ST neoChrome image file to a BMP file format.
 
 
