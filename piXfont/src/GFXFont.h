@@ -24,20 +24,28 @@
 #define GFXFont_h
 
 typedef struct {
-    uint16_t offset;   // Offset address to the bitmap data for this glypth.
-    uint8_t  width;    // Bitmap dimensions in pixels.
-    uint8_t  height;   // Bitmap dimensions in pixels.
-    uint8_t  xAdvance; // Distance to advance cursor in the x-axis.
-    int8_t   dX;       // Used to position the glyph within the cell in the horizontal direction.
-    int8_t   dY;       // Distance from the baseline of the character to the top of the glyph.
+    uint16_t   bitmapOffset;    // Offset address into the bitmap data.
+    uint8_t    width, height;   // Bitmap dimensions in pixels.
+    uint8_t    xAdvance;        // Distance to advance cursor in the x-axis.
+    int8_t     dX;              // Used to position the glyph within the cell in the horizontal direction.
+    int8_t     dY;              // Distance from the baseline of the character to the top of the glyph.
 } GFXglyph;
 
 typedef struct {
-    uint8_t   *bitmap;   // Bitmap data array.
-    GFXglyph  *glyph;    // Glyph data.
-    uint16_t   first;    // The first ASCII value of your first character.
-    uint16_t   last;     // The last ASCII value of your last character.
-    uint8_t    yAdvance; // Newline distance in the y-axis.
+    uint8_t   *bitmap;          // Glyphe bitmaps, concatenated.
+    GFXglyph  *glyph;           // Glyph array.
+    uint16_t   first;           // The first ASCII value of your first character.
+    uint16_t   last;            // The last ASCII value of your last character.
+    uint8_t    yAdvance;        // Newline distance in the y-axis.
+    
+    // Extension
+    uint8_t    bitCount;        /* 
+                                 Bits per pixel for color depth, typically rangingfrom 1 to 4 for
+                                 grayscale, although 8, 24, or 32 are possible for grayscale and true
+                                 color..
+                                 */
+    uint16_t  *palette;         // R5R6R5 palette for color, or null for grayscale or true color.
+    
 } GFXfont;
 
 #endif /* GFXFont_h */

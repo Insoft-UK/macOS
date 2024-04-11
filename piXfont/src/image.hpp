@@ -88,4 +88,10 @@ Image *convertMonochromeBitmapToPixmap(const Image *monochrome);
  */
 void reset(Image *&image);
 
+/**
+ @brief Takes an input image and identifies and extracts a section of the image that contains an actual image.
+ @param image The input image from which a section containing an actual image will be extracted.
+ */
+Image *extractImageSection(Image *image);
+
 #endif /* image_hpp */

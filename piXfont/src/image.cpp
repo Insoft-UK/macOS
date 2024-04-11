@@ -169,3 +169,42 @@ void reset(Image *&image)
         image = nullptr;
     }
 }
+
+Image *extractImageSection(Image *image)
+{
+    Image *extractedImage = nullptr;
+    
+    int minX, maxX, minY, maxY;
+    
+    if (!image || !image->data) return nullptr;
+    
+    uint8_t *p = (uint8_t *)image->data;
+    
+    maxX = 0;
+    maxY = 0;
+    minX = image->width - 1;
+    minY = image->height - 1;
+    
+    for (int y=0; y<image->height; y++) {
+        for (int x=0; x<image->width; x++) {
+            if (!p[x + y * image->width]) continue;
+            if (x < minX) minX = x;
+            if (x > maxX) maxX = x;
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
+        }
+    }
+    
+    if (maxX < minX || maxY < minY)
+        return nullptr;
+    
+    
+    int width = maxX - minX + 1;
+    int height = maxY - minY + 1;
+    
+    extractedImage = createPixmap(width, height);
+    if (!extractedImage) return nullptr;
+    copyPixmap(extractedImage, 0, 0, image, minX, minY, width, height);
+    
+    return extractedImage;
+}
