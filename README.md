@@ -1,5 +1,4 @@
-# macOS
- Command Line Tools
+# macOS Command Line Tools
 
 ## piXfont
 #### Adafruit font creator.
