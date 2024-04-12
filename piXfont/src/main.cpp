@@ -145,16 +145,16 @@ GFXglyph autoGFXglyphSettings(Image *image)
     return gfxGlyph;
 }
 
-bool isGlyphImageBlank(const Image *image)
+bool containsActualImage(const Image *image)
 {
-    if (!image || !image->data) return true;
+    if (!image || !image->data) return false;
     
     uint8_t *p = (uint8_t *)image->data;
     for (int l=0; image->width * image->height; l++) {
-        if (*p++) return false;
+        if (*p++) return true;
     }
     
-    return true;
+    return false;
 }
 
 void concatenateImageData(Image *image, std::vector<uint8_t> &data)
@@ -183,10 +183,10 @@ std::string addCharacter(uint16_t character, GFXglyph &glyph, GFXfont &font)
     std::ostringstream os;
     std::string s;
     
-    os << "    { ";
-    os << std::setw(5) << (int)glyph.bitmapOffset << "," << std::setw(3) << (int)glyph.width << "," << std::setw(3) << (int)glyph.height << "," << std::setw(3) << (int)glyph.xAdvance << "," << std::setw(3) << (int)glyph.dX << "," << std::setw(4) << (int)glyph.dY << " }, ";
+    os << "  { ";
+    os << std::setw(5) << (int)glyph.bitmapOffset << "," << std::setw(4) << (int)glyph.width << "," << std::setw(4) << (int)glyph.height << "," << std::setw(4) << (int)glyph.xAdvance << "," << std::setw(4) << (int)glyph.dX << "," << std::setw(4) << (int)glyph.dY << " },   ";
     
-    os << "// 0x" << std::setw(2) << std::hex << (int)character << std::dec << " ";
+    os << "// 0x" << std::setfill('0') << std::setw(2) << std::hex << (int)character << std::dec << " ";
     
     if (character < ' ') {
         os << "'none printable'\n";
@@ -248,7 +248,7 @@ void processAndCreateFile(std::string &filename, std::string &name, GFXfont &gfx
             offset, 0, 0, 0, 0, 0
         };
         
-        if (!isGlyphImageBlank(image)) {
+        if (containsActualImage(image)) {
             gfxGlyph = autoGFXglyphSettings(image);
         
             if (leftAlign) {
@@ -292,14 +292,14 @@ void processAndCreateFile(std::string &filename, std::string &name, GFXfont &gfx
 #endif\n\n\
 #ifndef " << name << "_h\n\
 #define " << name << "_h\n\n\
-const uint8_t " << name << "_Bitmaps[] PROGMEM = {\n    \
+const uint8_t " << name << "_Bitmaps[] PROGMEM = {\n  \
 " << std::setfill('0') << std::setw(2) << std::hex;
     
     for (int n = 0; n < data.size(); n++) {
         if (n % 12) os << " ";
         os << "0x" << std::setw(2) << (int)data.at(n);
         if (n < data.size()-1) os << ",";
-        if (n % 12 == 11) os << "\n    ";
+        if (n % 12 == 11) os << "\n  ";
     }
     os << "\n};\n\n";
     
