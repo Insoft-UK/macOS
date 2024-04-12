@@ -106,7 +106,7 @@ void version(void) {
 
 GFXglyph autoGFXglyphSettings(Image *image)
 {
-    GFXglyph gfxGlyph;
+    GFXglyph gfxGlyph = {0, 0, 0, 0, 0, 0};
     int minX, maxX, minY, maxY;
     
     if (!image || !image->data) return gfxGlyph;
@@ -130,9 +130,7 @@ GFXglyph autoGFXglyphSettings(Image *image)
     }
     
     if (maxX < minX || maxY < minY) {
-        minX = minY = 0;
-        maxX = 8;
-        maxY = 16;
+        return gfxGlyph;
     }
     
     gfxGlyph.bitmapOffset = 0;
@@ -151,7 +149,7 @@ bool containsActualImage(const Image *image)
     
     uint8_t *p = (uint8_t *)image->data;
     for (int l=0; image->width * image->height; l++) {
-        if (*p++) return true;
+        if (p[l]) return true;
     }
     
     return false;
@@ -237,7 +235,6 @@ void processAndCreateFile(std::string &filename, std::string &name, GFXfont &gfx
     
     Image *image = createPixmap(width, gfxFont.yAdvance);
 
-    
     for (uint16_t n = 0; n < gfxFont.last - gfxFont.first + 1; n++) {
         int col = pixmap->width / (width + hs);
         int x = (n % col) * (width + hs);
@@ -247,36 +244,29 @@ void processAndCreateFile(std::string &filename, std::string &name, GFXfont &gfx
         GFXglyph gfxGlyph = {
             offset, 0, 0, 0, 0, 0
         };
+        gfxGlyph = autoGFXglyphSettings(image);
         
-        if (containsActualImage(image)) {
-            gfxGlyph = autoGFXglyphSettings(image);
-        
-            if (leftAlign) {
-                gfxGlyph.xAdvance -= gfxGlyph.dX;
-                gfxGlyph.dX = 0;
-            }
-            
-            if (fixed) {
-                gfxGlyph.xAdvance = width;
-            }
-            
-            Image *extractedImage = extractImageSection(image);
-            if (!extractedImage) {
-                std::cout << MessageType::Error << "Unable to extract image for Glyph '" << char(n) << "'.\n";
-                reset(image);
-                reset(pixmap);
-                return;;
-            }
-            
-            concatenateImageData(extractedImage, data);
-        
-            gfxGlyph.bitmapOffset = offset;
-            offset += (extractedImage->width * extractedImage->height + 7) / 8;
-            
-            reset(extractedImage);
+        Image *extractedImage = extractImageSection(image);
+        if (!extractedImage) {
+            osGlyph << addCharacter(n + gfxFont.first, gfxGlyph, gfxFont);
+            continue;
         }
         
+        concatenateImageData(extractedImage, data);
+        
+        if (leftAlign) {
+            gfxGlyph.xAdvance -= gfxGlyph.dX;
+            gfxGlyph.dX = 0;
+        }
+        
+        if (fixed) {
+            gfxGlyph.xAdvance = width;
+        }
+        
+        gfxGlyph.bitmapOffset = offset;
+        offset += (extractedImage->width * extractedImage->height + 7) / 8;
         osGlyph << addCharacter(n + gfxFont.first, gfxGlyph, gfxFont);
+        reset(extractedImage);
     }
     osGlyph << "};\n";
     

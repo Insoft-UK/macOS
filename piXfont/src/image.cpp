@@ -189,10 +189,10 @@ Image *extractImageSection(Image *image)
     for (int y=0; y<image->height; y++) {
         for (int x=0; x<image->width; x++) {
             if (!p[x + y * image->width]) continue;
-            if (x < minX) minX = x;
-            if (x > maxX) maxX = x;
-            if (y < minY) minY = y;
-            if (y > maxY) maxY = y;
+            if (minX > x) minX = x;
+            if (maxX < x) maxX = x;
+            if (minY > y) minY = y;
+            if (maxY < y) maxY = y;
         }
     }
     
