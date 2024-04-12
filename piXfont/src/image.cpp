@@ -134,6 +134,7 @@ Image *convertMonochromeBitmapToPixmap(const Image *monochrome)
     uint8_t *src = (uint8_t *)monochrome->data;
     uint8_t bitPosition = 1 << 7;
     
+    image->type = ImageType_Pixmap;
     image->width = monochrome->width;
     image->height = monochrome->height;
     image->data = malloc(image->width * image->height);
@@ -143,19 +144,19 @@ Image *convertMonochromeBitmapToPixmap(const Image *monochrome)
     
     uint8_t *dest = (uint8_t *)image->data;
     
-    for (int y=0; y<monochrome->height; y++) {
+    int x, y;
+    for (y=0; y<monochrome->height; y++) {
         bitPosition = 1 << 7;
-        for (int x=0; x<monochrome->width; x++) {
-            if (bitPosition == 0) {
-                bitPosition = 1 << 7;
-                src++;
-            }
+        for (x=0; x<monochrome->width; x++) {
             *dest++ = (*src & bitPosition ? 1 : 0);
-            bitPosition >>= 1;
+            if (bitPosition == 1) {
+                src++;
+                bitPosition = 1 << 7;
+            } else {
+                bitPosition >>= 1;
+            }
         }
-        if (bitPosition > 0) {
-            src++;
-        }
+        if (x & 7) src++;
     }
     
     return image;

@@ -84,6 +84,7 @@ void usage(void)
     std::cout << " -hs,              horizontal spacing in pixels between each glyph.\n";
     std::cout << " -vs,              vertical spacing in pixels between each glyph.\n";
     std::cout << " -x, --fixed       fixed char width.\n";
+    std::cout << " -la               left-align glyphs.\n";
     std::cout << "\n";
     std::cout << " --version         displays the full version number.\n";
 }
@@ -121,10 +122,10 @@ GFXglyph autoGFXglyphSettings(Image *image)
     for (int y=0; y<image->height; y++) {
         for (int x=0; x<image->width; x++) {
             if (!p[x + y * image->width]) continue;
-            if (x < minX) minX = x;
-            if (x > maxX) maxX = x;
-            if (y < minY) minY = y;
-            if (y > maxY) maxY = y;
+            if (minX > x) minX = x;
+            if (maxX < x) maxX = x;
+            if (minY > y) minY = y;
+            if (maxY < y) maxY = y;
         }
     }
     
@@ -137,7 +138,7 @@ GFXglyph autoGFXglyphSettings(Image *image)
     gfxGlyph.bitmapOffset = 0;
     gfxGlyph.width = maxX - minX + 1;
     gfxGlyph.height = maxY - minY + 1;
-    gfxGlyph.xAdvance = image->width;
+    gfxGlyph.xAdvance = minX + gfxGlyph.width + 1;
     gfxGlyph.dX = minX;
     gfxGlyph.dY = -image->height + minY;
     
@@ -177,9 +178,32 @@ void concatenateImageData(Image *image, std::vector<uint8_t> &data)
     }
 }
 
+std::string addCharacter(uint16_t character, GFXglyph &glyph, GFXfont &font)
+{
+    std::ostringstream os;
+    std::string s;
+    
+    os << "    { ";
+    os << std::setw(5) << (int)glyph.bitmapOffset << "," << std::setw(3) << (int)glyph.width << "," << std::setw(3) << (int)glyph.height << "," << std::setw(3) << (int)glyph.xAdvance << "," << std::setw(3) << (int)glyph.dX << "," << std::setw(4) << (int)glyph.dY << " }, ";
+    
+    os << "// 0x" << std::setw(2) << std::hex << (int)character << std::dec << " ";
+    
+    if (character < ' ') {
+        os << "'none printable'\n";
+    } else {
+        os << "'" << (char)character << "'\n";
+    }
+    
+    s = os.str();
+    if (font.last == character)
+        s = std::regex_replace(s, std::regex(R"(\},)"), "} ");
+    
+    return s;
+}
+
 // TODO: Add extended support for none monochrome glyphs.
 
-void create(std::string &filename, std::string &name, GFXfont &gfxFont, int width, int hs, int vs, bool fixed)
+void processAndCreateFile(std::string &filename, std::string &name, GFXfont &gfxFont, int width, int hs, int vs, bool fixed, bool leftAlign)
 {
     Image *monochrome;
     monochrome = loadPBGraphicFile(filename);
@@ -204,19 +228,17 @@ void create(std::string &filename, std::string &name, GFXfont &gfxFont, int widt
         return;
     }
     
+    
     reset(monochrome);
     
     std::vector<uint8_t> data;
     std::ostringstream osGlyph;
-    
     uint16_t offset = 0;
-    osGlyph << "const GFXglyph " << name << "_Glyphs[] PROGMEM = {"; // " << (parameters.l - parameters.f + 1) << "
-    
     
     Image *image = createPixmap(width, gfxFont.yAdvance);
+
     
-    
-    for (int n = 0; n < gfxFont.last - gfxFont.first + 1; n++) {
+    for (uint16_t n = 0; n < gfxFont.last - gfxFont.first + 1; n++) {
         int col = pixmap->width / (width + hs);
         int x = (n % col) * (width + hs);
         int y = (n / col) * (gfxFont.yAdvance + vs);
@@ -228,14 +250,22 @@ void create(std::string &filename, std::string &name, GFXfont &gfxFont, int widt
         
         if (!isGlyphImageBlank(image)) {
             gfxGlyph = autoGFXglyphSettings(image);
-            if (fixed) gfxGlyph.xAdvance = width;
+        
+            if (leftAlign) {
+                gfxGlyph.xAdvance -= gfxGlyph.dX;
+                gfxGlyph.dX = 0;
+            }
+            
+            if (fixed) {
+                gfxGlyph.xAdvance = width;
+            }
             
             Image *extractedImage = extractImageSection(image);
             if (!extractedImage) {
-                std::cout << MessageType::Warning << "Unable to extract image for Glyph '" << char(n) << "'.\n";
-                reset(extractedImage);
-                osGlyph << "\n    {     0,  0,  0,  0,  0,  0 }, // Unused!";
-                continue;
+                std::cout << MessageType::Error << "Unable to extract image for Glyph '" << char(n) << "'.\n";
+                reset(image);
+                reset(pixmap);
+                return;;
             }
             
             concatenateImageData(extractedImage, data);
@@ -246,19 +276,9 @@ void create(std::string &filename, std::string &name, GFXfont &gfxFont, int widt
             reset(extractedImage);
         }
         
-        osGlyph << "\n    { " << std::setw(5) << (int)gfxGlyph.bitmapOffset << "," << std::setw(3) << (int)gfxGlyph.width << "," << std::setw(3) << (int)gfxGlyph.height << "," << std::setw(3) << (int)gfxGlyph.xAdvance << "," << std::setw(3) << (int)gfxGlyph.dX << "," << std::setw(4) << (int)gfxGlyph.dY;
-        char charactor = n + gfxFont.first;
-        if (charactor < ' ') charactor = ' ';
-        
-        if (n < gfxFont.last - gfxFont.first) {
-            osGlyph << " }, // 0x" << std::setw(2) << std::hex << (n + gfxFont.first) << std::dec << " '" << charactor << "'";
-        } else {
-            osGlyph << " }  // 0x" << std::setw(2) << std::hex << (n + gfxFont.first) << std::dec << " '" << charactor << "'";
-            osGlyph << "\n};\n";
-        }
-        
-        
+        osGlyph << addCharacter(n + gfxFont.first, gfxGlyph, gfxFont);
     }
+    osGlyph << "};\n";
     
     reset(image);
     reset(pixmap);
@@ -266,7 +286,7 @@ void create(std::string &filename, std::string &name, GFXfont &gfxFont, int widt
     std::ostringstream os;
     
     os << "\
-// Generated by piXfont v\n\
+// Generated by piXfont\n\
 #ifndef PROGMEM\n\
     #define PROGMEM /* None Arduino */\n\
 #endif\n\n\
@@ -281,7 +301,11 @@ const uint8_t " << name << "_Bitmaps[] PROGMEM = {\n    \
         if (n < data.size()-1) os << ",";
         if (n % 12 == 11) os << "\n    ";
     }
-    os << "\n};\n\n" << osGlyph.str() << std::dec << "\n\
+    os << "\n};\n\n";
+    
+    os << "const GFXglyph " << name << "_Glyphs[] PROGMEM = {\n";
+    
+    os << osGlyph.str() << std::dec << "\n\
 const GFXfont " << name << " PROGMEM = {(uint8_t *) " << name << "_Bitmaps, (GFXglyph *) " << name << "_Glyphs, " << gfxFont.first << ", " << gfxFont.last << ", " << (int)gfxFont.yAdvance << "};\n\n\
 #endif /* " << name << "_h */\n";
     
@@ -291,6 +315,7 @@ const GFXfont " << name << " PROGMEM = {(uint8_t *) " << name << "_Bitmaps, (GFX
     
     size_t pos = filename.rfind("/");
     path = filename.substr(0, pos + 1);
+    
     
     outfile.open(path + name + ".h", std::ios::out | std::ios::binary);
     if (outfile.is_open()) {
@@ -311,6 +336,7 @@ int main(int argc, const char * argv[])
     GFXfont gfxFont = { 0, 0, 32, 95, 8 };
     int width = 8, hs = 0, vs = 0;
     bool fixed = false;
+    bool leftAlign = false;
     
     for( int n = 1; n < argc; n++ ) {
         if (*argv[n] == '-') {
@@ -384,6 +410,11 @@ int main(int argc, const char * argv[])
                 continue;
             }
             
+            if ( strcmp( argv[n], "-la" ) == 0 ) {
+                leftAlign = true;
+                continue;
+            }
+            
             if ( strcmp( argv[n], "--help" ) == 0 ) {
                 usage();
                 return 0;
@@ -406,7 +437,7 @@ int main(int argc, const char * argv[])
         name = name.substr(pos + 1, name.length() - pos);
     }
  
-    create(filename, name, gfxFont, width, hs, vs, fixed);
+    processAndCreateFile(filename, name, gfxFont, width, hs, vs, fixed, leftAlign);
     return 0;
 }
 
