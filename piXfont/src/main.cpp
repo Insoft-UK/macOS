@@ -77,6 +77,7 @@ void usage(void)
 //    std::cout << "            f font\n";
 //    std::cout << "            g glyphs\n\n";
     
+    std::cout << " -d, --distance    distance to advance cursor in the x-axis, default is 1.\n";
     std::cout << " -f, --first       first ASCII value of your first character.\n";
     std::cout << " -l, --last        last ASCII value of your last character.\n";
     std::cout << " -w, --width       width of the bitmap in pixels.\n";
@@ -136,7 +137,7 @@ GFXglyph autoGFXglyphSettings(Image *image)
     gfxGlyph.bitmapOffset = 0;
     gfxGlyph.width = maxX - minX + 1;
     gfxGlyph.height = maxY - minY + 1;
-    gfxGlyph.xAdvance = minX + gfxGlyph.width + 1;
+    gfxGlyph.xAdvance = minX + gfxGlyph.width;
     gfxGlyph.dX = minX;
     gfxGlyph.dY = -image->height + minY;
     
@@ -201,7 +202,7 @@ std::string addCharacter(uint16_t character, GFXglyph &glyph, GFXfont &font)
 
 // TODO: Add extended support for none monochrome glyphs.
 
-void processAndCreateFile(std::string &filename, std::string &name, GFXfont &gfxFont, int width, int hs, int vs, bool fixed, bool leftAlign)
+void processAndCreateFile(std::string &filename, std::string &name, GFXfont &gfxFont, int width, int hs, int vs, bool fixed, bool leftAlign, int distance)
 {
     Image *monochrome;
     monochrome = loadPBGraphicFile(filename);
@@ -261,6 +262,8 @@ void processAndCreateFile(std::string &filename, std::string &name, GFXfont &gfx
         
         if (fixed) {
             gfxGlyph.xAdvance = width;
+        } else {
+            gfxGlyph.xAdvance += distance;
         }
         
         gfxGlyph.bitmapOffset = offset;
@@ -327,9 +330,19 @@ int main(int argc, const char * argv[])
     int width = 8, hs = 0, vs = 0;
     bool fixed = false;
     bool leftAlign = false;
+    int distance = 1;
     
     for( int n = 1; n < argc; n++ ) {
         if (*argv[n] == '-') {
+            if ( strcmp( argv[n], "-d" ) == 0 || strcmp( argv[n], "--distance" ) == 0 ) {
+                if ( ++n >= argc ) {
+                    error();
+                    return 0;
+                }
+                distance = atoi(argv[n]);
+                continue;
+            }
+            
             if ( strcmp( argv[n], "-n" ) == 0 || strcmp( argv[n], "--name" ) == 0 ) {
                 if ( n + 1 >= argc ) {
                     error();
@@ -427,7 +440,7 @@ int main(int argc, const char * argv[])
         name = name.substr(pos + 1, name.length() - pos);
     }
  
-    processAndCreateFile(filename, name, gfxFont, width, hs, vs, fixed, leftAlign);
+    processAndCreateFile(filename, name, gfxFont, width, hs, vs, fixed, leftAlign, distance);
     return 0;
 }
 
