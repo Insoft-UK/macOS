@@ -23,6 +23,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1331F29F2C1142220044C226 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		1331F2A02C1142380044C226 /* build.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
+		1331F2A12C1142880044C226 /* examples */ = {isa = PBXFileReference; lastKnownFileType = folder; path = examples; sourceTree = "<group>"; };
 		84E377E518D243160086EEC0 /* bin2c */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bin2c; sourceTree = BUILT_PRODUCTS_DIR; };
 		84E377F118D243290086EEC0 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -41,6 +44,9 @@
 		84E377DC18D243150086EEC0 = {
 			isa = PBXGroup;
 			children = (
+				1331F2A02C1142380044C226 /* build.sh */,
+				1331F29F2C1142220044C226 /* Makefile */,
+				1331F2A12C1142880044C226 /* examples */,
 				84E377E718D243160086EEC0 /* src */,
 				84E377E618D243160086EEC0 /* Products */,
 			);
@@ -88,7 +94,7 @@
 		84E377DD18D243150086EEC0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1530;
 				ORGANIZATIONNAME = Insoft;
 			};
 			buildConfigurationList = 84E377E018D243150086EEC0 /* Build configuration list for PBXProject "bin2c" */;
