@@ -25,6 +25,8 @@
 /* Begin PBXFileReference section */
 		137976372BBF8B6F0095FC27 /* OCEAN.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = OCEAN.bmp; sourceTree = "<group>"; };
 		137976432BC1D5F60095FC27 /* OCEAN.PI1 */ = {isa = PBXFileReference; lastKnownFileType = file; path = OCEAN.PI1; sourceTree = "<group>"; };
+		138F54D62C977879009357F9 /* LICENCE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENCE.txt; sourceTree = "<group>"; };
+		138F54D72C977880009357F9 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		84764225189579CD00AFBE9C /* Degas */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Degas; sourceTree = BUILT_PRODUCTS_DIR; };
 		84764228189579CD00AFBE9C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -52,6 +54,8 @@
 		8476421C189579CD00AFBE9C = {
 			isa = PBXGroup;
 			children = (
+				138F54D62C977879009357F9 /* LICENCE.txt */,
+				138F54D72C977880009357F9 /* README.md */,
 				137976362BBF8B000095FC27 /* examples */,
 				84764227189579CD00AFBE9C /* src */,
 				84764226189579CD00AFBE9C /* Products */,

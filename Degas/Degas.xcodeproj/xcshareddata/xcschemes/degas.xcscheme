@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "84764224189579CD00AFBE9C"
-               BuildableName = "degas"
+               BuildableName = "Degas"
                BlueprintName = "Degas"
-               ReferencedContainer = "container:degas.xcodeproj">
+               ReferencedContainer = "container:Degas.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -46,9 +46,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "84764224189579CD00AFBE9C"
-            BuildableName = "degas"
+            BuildableName = "Degas"
             BlueprintName = "Degas"
-            ReferencedContainer = "container:degas.xcodeproj">
+            ReferencedContainer = "container:Degas.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
@@ -69,9 +69,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "84764224189579CD00AFBE9C"
-            BuildableName = "degas"
+            BuildableName = "Degas"
             BlueprintName = "Degas"
-            ReferencedContainer = "container:degas.xcodeproj">
+            ReferencedContainer = "container:Degas.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
